@@ -1,30 +1,29 @@
 #define TB_IMPL
 #include "termbox2.h"
-
 #include <stdio.h>
 
 #define MIN_WIDTH  200
 #define MIN_HEIGHT 60
 
-struct vector2 {
+typedef struct {
 	float x;
 	float y;
-};
+} vector2;
 
-struct rectangle {
+typedef struct {
 	struct vector2 pos;
 	struct vector2 size;
-};
+} rectangle;
 
-struct pixel {
+typedef struct {
 	unsigned byte color;
 	char symbol;
-};
+} pixel;
 
-struct screen {
+typedef struct {
   int w, h;
 	pixel *pixels;
-};
+} screen;
 
 void draw_screen(*struct screen scr) {
   for (int x = 0; x < scr->width; ++x) {
@@ -37,8 +36,6 @@ void draw_screen(*struct screen scr) {
 }
 
 int main(void) {
-	struct tb_event ev;
-
 	tb_init();
 
 	int w = tb_width();
@@ -51,11 +48,6 @@ int main(void) {
 						MIN_WIDTH, MIN_HEIGHT, w, h);
 		exit(-1);
 	}
-
-	tb_printf(0, 0, 0, 0, "█");
-
-	tb_present(); 
-	tb_poll_event(&ev);
 
 	tb_shutdown();
 
