@@ -1,4 +1,4 @@
-### NTDG - Not a Three Dimensional Game.
+### NTDG - Not a Three-Dimensional Game.
 ## "What is this?"
 This is a simple "2.5D" game written in C programming language using ray tracing.  
 It uses [Termbox2](https://github.com/termbox/termbox2) for rendering graphics in terminal.
