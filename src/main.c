@@ -7,8 +7,9 @@
 #define MIN_WIDTH  200
 #define MIN_HEIGHT 60
 
-#define BARS_CHAR  0
-#define BARS_COLOR 0
+#define BARS_CHAR 0
+#define BARS_FG   0
+#define BARS_BG   0 
 
 typedef struct {
 	float x;
@@ -66,38 +67,74 @@ void screen_init(screen *scr) {
 	scr->mright = mr;
 	scr->mtop = mr;
 	scr->mbottom = mb;
-
-	scr->pixels = calloc(MIN_WIDTH * MIN_HEIGHT, sizeof(pixel));
+	scr->pixels = calloc(scr->swidth * scr->sheight, sizeof(pixel));
 }
 
-void screen_draw(screen *scr) {
+void screen_draw_bars(const screen *scr) {
+	// Draw left bar
+	for (int x = 0; x < scr->mleft; ++x) {
+		for (int y = 0; y < scr->sheight; ++y) {
+			tb_set_cell(x, y, BARS_CHAR, BARS_FG, BARS_BG);
+		}
+	}
+
+	// Draw top bar
+	for (int x = 0; x < scr->swidth; ++x) {
+		for (int y = 0; y < scr->mtop; ++y) {
+			tb_set_cell(x, y, BARS_CHAR, BARS_FG, BARS_BG);
+		}
+	}
+
+	// Draw right bar
+	for (int x = scr->swidth - scr->mright; x < scr->swidth; ++x) {
+		for (int y = 0; y < scr->sheight; ++y) {
+			tb_set_cell(x, y, BARS_CHAR, BARS_FG, BARS_BG);
+		}
+	}
+
+	// Draw bottom bar
+	for (int x = 0; x < scr->swidth; ++x) {
+		for (int y = scr->sheight - scr->mbottom; y < scr->sheight; ++y) {
+			tb_set_cell(x, y, BARS_CHAR, BARS_FG, BARS_BG);
+		}
+	}
+
+	tb_present();
+}
+
+void screen_draw_content(const screen *scr) {
   int rw = scr->rwidth;
   int rh = scr->rheight;
 
-  for (int x = scr->mleft + 1; x < rw; ++x) {
+	for (int x = scr->mleft + 1; x < rw; ++x) {
 		for (int y = scr->mtop + 1; y < rh; ++y) {
-  		pixel p = scr->pixels[y * rw + x];
-  		tb_set_cell(x, y, p.symbol, p.color, 0);
+			pixel p = scr->pixels[y * rw + x];
+			tb_set_cell(x, y, p.symbol, p.color, 0);	
 		}
-  }
-
-  for (int x = 0; x < scr->mleft; ++x) {
-		for (int y = scr->mtop + 1; y < rh; ++y) {
-  		pixel p = scr->pixels[y * rw + x];
-  		tb_set_cell(x, y, p.symbol, p.color, 0);
-		}
-  }
+	}
 
 	tb_present(); 
 }
 
+void screen_fill(screen *scr, pixel *p) {
+  int rw = scr->rwidth;
+  int rh = scr->rheight;
+
+	for (int i = 0; i < rw * rh; ++i) {
+		scr->pixels[i].symbol = p->symbol;
+		scr->pixels[i].color = p->color;
+	}
+}
+
 int main(void) {
   struct tb_event ev; 
+
 	tb_init();
 
 	int w = tb_width();
 	int h = tb_height(); 
 
+	#if 0
 	if (w < MIN_WIDTH ||
 	    h < MIN_HEIGHT) {
 		tb_shutdown();
@@ -105,20 +142,18 @@ int main(void) {
 						MIN_WIDTH, MIN_HEIGHT, w, h);
 		exit(-1);
 	}
+	#endif
 
-	// uint32_t rect = 9646;
+	uint32_t r = 9646;
 
-	pixel *ps = malloc(w * h * sizeof(pixel));
-	for (int i = 0; i < w * h; ++i) {
-		ps[i].color = TB_BLUE;
-		ps[i].symbol = '+';
-	}
+	screen scr;
+	screen_init(&scr);
 
-	screen scr = { w, h, ps, };
+	pixel p = { TB_BLUE, r, };
+	screen_fill(&scr, &p);
 
-	draw_screen(&scr);
-	
-	tb_present();
+	screen_draw_bars(&scr);
+	screen_draw_content(&scr);
 
 	tb_poll_event(&ev);
 	tb_shutdown();
