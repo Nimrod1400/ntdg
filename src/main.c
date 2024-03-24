@@ -1,6 +1,7 @@
 #define TB_IMPL
 #include "termbox2.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
 
@@ -10,16 +11,6 @@
 #define BARS_CHAR 0
 #define BARS_FG   0
 #define BARS_BG   0 
-
-typedef struct {
-	float x;
-	float y;
-} vector2;
-
-typedef struct {
-	vector2 pos;
-	vector2 size;
-} rectangle;
 
 typedef struct {
 	uintattr_t color;
@@ -36,6 +27,11 @@ typedef struct {
 void screen_init(screen *scr) {
 	int w = tb_width();
 	int h = tb_height(); 
+
+#if 0
+	assert(w > 0);
+	assert(h > 0);
+#endif
 
 	scr->swidth = w;
 	scr->sheight = h;
@@ -134,7 +130,7 @@ int main(void) {
 	int w = tb_width();
 	int h = tb_height(); 
 
-	#if 0
+#if 0
 	if (w < MIN_WIDTH ||
 	    h < MIN_HEIGHT) {
 		tb_shutdown();
@@ -142,10 +138,9 @@ int main(void) {
 						MIN_WIDTH, MIN_HEIGHT, w, h);
 		exit(-1);
 	}
-	#endif
-
+#endif 
 	uint32_t r = 9646;
-
+	// TODO: Fix bars size
 	screen scr;
 	screen_init(&scr);
 
