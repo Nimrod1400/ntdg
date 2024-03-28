@@ -9,7 +9,7 @@
 #define MIN_HEIGHT 90
 #define BARS_CHAR  0
 #define BARS_FG    0
-#define BARS_BG    TB_YELLOW 
+#define BARS_BG    0x000020
 
 typedef uintattr_t pixel;
 
@@ -128,7 +128,7 @@ int main(void) {
       h < MIN_HEIGHT) {
     tb_shutdown();
     fprintf(stderr, 
-            "Error: terminal is too small! Required %dx%d, found %dx%d.",
+            "Error: The terminal is too small! Required %dx%d, found %dx%d.",
             MIN_WIDTH, MIN_HEIGHT, w, h);
     exit(-1);
   }
@@ -136,10 +136,10 @@ int main(void) {
   screen scr;
   screen_init(&scr);
 
-  screen_fill_content(&scr, 0x12);
+  screen_fill_content(&scr, 0xdd00dd);
 
-  screen_draw_bars(&scr);
   screen_draw_content(&scr);
+  screen_draw_bars(&scr);
 
   tb_poll_event(&ev);
   tb_shutdown();
