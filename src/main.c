@@ -11,6 +11,8 @@
 #define BARS_FG    0
 #define BARS_BG    0x101030
 
+#define ASPECT 0.5 // How smaller horizontal side of the char than vertical one
+
 typedef uintattr_t pixel;
 
 typedef struct {
@@ -170,8 +172,6 @@ void render() {
 }
 
 int main(void) {
-  struct tb_event ev; 
-
   tb_init();
 
   validate_term_size();
@@ -186,9 +186,9 @@ int main(void) {
 
   // Main loop
   for (;;) {
-    receive_input(&ev);
+    receive_input();
     update_state();
-    render(&scr);
+    render();
   }
 
   tb_shutdown();
